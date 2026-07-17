@@ -37,8 +37,10 @@
 - [ ] `/abc-ga sync legacai G-XXXX` when measurement id available
 
 ## V6 · Vercel deploy
-- [ ] `vercel link --non-interactive --scope matsiems --project legacai`
-- [ ] `/abc-vercel` sync .env.local → prod
+- [ ] `vercel link` — **currently 403 on personal `matsiems` scope** in CLI v54.
+      Workaround: create the project in the Vercel dashboard first, then run
+      `scripts/deploy.sh`. Same pattern as the CAD 2026-06-17 gotcha.
+- [ ] `/abc-vercel` sync .env.local → prod (script primed in `scripts/deploy.sh`)
 - [ ] `vercel --prod` first deploy
 - [ ] `NEXT_PUBLIC_APP_URL` patched to prod alias
 - [ ] `robots.txt` + `sitemap.xml`
