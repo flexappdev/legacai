@@ -1,34 +1,33 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import Legacai from "@/app/page";
+import VaultPage from "@/app/vault/page";
 
-describe("Dashboard", () => {
-  it("navigates from landing to dashboard when OPEN LEGACAI is clicked", () => {
-    render(<Legacai />);
-    const openBtn = screen.getAllByText(/OPEN LEGACAI/i)[0];
-    fireEvent.click(openBtn);
-    // Dashboard renders the sidebar Agent nav item
+describe("Vault (/vault) — Dashboard", () => {
+  it("renders the sidebar nav with all sections", () => {
+    render(<VaultPage />);
     expect(screen.getByTestId("nav-agent")).toBeInTheDocument();
+    expect(screen.getByTestId("nav-sources")).toBeInTheDocument();
+    expect(screen.getByTestId("nav-vault")).toBeInTheDocument();
+    expect(screen.getByTestId("nav-family")).toBeInTheDocument();
     expect(screen.getByTestId("nav-releases")).toBeInTheDocument();
+    expect(screen.getByTestId("nav-charter")).toBeInTheDocument();
   });
 
   it("switches vault type when Personal/Family/Business tabs are clicked", () => {
-    render(<Legacai />);
-    fireEvent.click(screen.getAllByText(/OPEN LEGACAI/i)[0]);
-    const personal = screen.getByTestId("vault-personal");
-    fireEvent.click(personal);
-    expect(
-      screen.getByText(/PERSONAL VAULT — MAT/i),
-    ).toBeInTheDocument();
+    render(<VaultPage />);
+    fireEvent.click(screen.getByTestId("vault-personal"));
+    expect(screen.getByText(/PERSONAL VAULT — MAT/i)).toBeInTheDocument();
   });
 
   it("shows agent bubbles with citations by default", () => {
-    render(<Legacai />);
-    fireEvent.click(screen.getAllByText(/OPEN LEGACAI/i)[0]);
-    // Dashboard's Agent page renders the first two Q&A bubbles by default.
-    // Look for citation chips — every real answer must cite its source.
+    render(<VaultPage />);
     expect(screen.getByText(/flat-deed-2019\.pdf/i)).toBeInTheDocument();
-    // "Story note" chip is one of at least two matches — bubble text also mentions it.
     expect(screen.getAllByText(/Story note/i).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("navigates from Agent to Releases when nav item is clicked", () => {
+    render(<VaultPage />);
+    fireEvent.click(screen.getByTestId("nav-releases"));
+    expect(screen.getByText(/Who receives what, and when/i)).toBeInTheDocument();
   });
 });
