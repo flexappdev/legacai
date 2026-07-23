@@ -14,19 +14,29 @@ For you, for the ones that matter, for now, for the future.
 | Path                    | Kind      | Notes                                                                 |
 |-------------------------|-----------|-----------------------------------------------------------------------|
 | `/`                     | static    | Landing — hero, sources, vaults, how-it-works, agent sample, pricing  |
+| `/?lang=fr\|pl\|es`     | static    | Same landing, translated — EN/FR/PL/ES switcher lives in the nav; choice persists via `localStorage` |
 | `/#how`, `/#vaults`, `/#sources`, `/#agent`, `/#pricing` | anchor | Deep-linkable sections; `history.replaceState` updates URL on nav click |
-| `/vault`                | static    | Dashboard — Agent · Sources · Vault · Family · Releases · Charter, Personal/Family/Business switcher |
+| `/vault`                | static    | 307 → `/vault/agent` (default tab)                                    |
+| `/vault/agent`          | SSG       | The Agent — sample QA bubbles with citations                          |
+| `/vault/sources`        | SSG       | Sources & Inbox — 8 source cards with curation progress               |
+| `/vault/vault`          | SSG       | My Vault — placeholder ("This section unlocks in the next release loop —") |
+| `/vault/family`         | SSG       | Family Circle — owner + guardians + invite                            |
+| `/vault/releases`       | SSG       | Release Plans — birthdays, milestones, "if something happens"         |
+| `/vault/charter`        | SSG       | Century Charter — four commitments                                    |
 | `/checkout/1yr`         | SSG       | £99/year — reserved for Stripe checkout (V7)                          |
 | `/checkout/10yr`        | SSG       | £799 one-off — MOST POPULAR                                           |
 | `/checkout/century`     | SSG       | £2,999 one-off — Century vault                                        |
 | `/icon`, `/apple-icon`  | generated | Programmatic Legacai L monogram (next/og)                             |
 | `/robots.txt`, `/sitemap.xml` | generated | SEO scaffolding                                                 |
 
+Each vault sidebar item is a real `<Link>` — tabs are bookmarkable, back/forward-navigable, and the URL is the source of truth for the active section (`app/vault/[section]/page.tsx`).
+
 ## Stack
 
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 (Turbopack)
 - **Auth:** Supabase (`@supabase/ssr`), `/admin` allowlist → `mat@matsiems.com`
 - **DB:** Mongo Atlas — shared FLEET cluster, `app='legacai'` discriminator
+- **i18n:** EN/FR/PL/ES dictionaries in `components/legacai-i18n.ts`; `useLocale()` hook reads `?lang=` then `localStorage`, defaults to EN
 - **Analytics:** GA4 wrapper (`lib/analytics.tsx`), gated on `NEXT_PUBLIC_GA_ID`
 - **Icon:** `app/icon.tsx` + `app/apple-icon.tsx` — L mark rendered via `next/og`
 - **Deploy:** Vercel (`matsiems` scope)
@@ -37,7 +47,7 @@ For you, for the ones that matter, for now, for the future.
 ```bash
 cd ~/APPS/legacai
 npm install
-npm test              # 25 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase
+npm test              # 27 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase
 npm run typecheck     # tsc --noEmit
 npm run build         # production build smoke (10 routes prerender)
 npm run dev           # local dev on :17010
@@ -54,7 +64,8 @@ Seven `/loop` slices from scaffold → monetised. See [`GOAL.md`](./GOAL.md).
 | V1    | Scaffold + JSX landing                                               | ✓      |
 | V1.1  | SEO scaffolding (`app/robots.ts`, `app/sitemap.ts`)                  | ✓      |
 | V1.2  | Real routes: `/vault`, `/checkout/[plan]` — fix broken pricing CTAs  | ✓      |
-| V2    | Red-green TDD (25/25 tests green)                                    | ✓      |
+| V1.3  | i18n landing (EN/FR/PL/ES) + URL-per-tab vault dashboard             | ✓      |
+| V2    | Red-green TDD (27/27 tests green)                                    | ✓      |
 | V3    | Supabase auth + `/admin` gate                                        | scaffolded (env-guarded) |
 | V4    | Mongo FLEET wiring                                                   | scaffolded (env-guarded) |
 | V5    | GA4 + Consent Mode v2                                                | wrapper ready — flip via `/abc-ga sync legacai G-XXXX` |
