@@ -17,12 +17,12 @@ For you, for the ones that matter, for now, for the future.
 | `/?lang=fr\|pl\|es`     | static    | Same landing, translated — EN/FR/PL/ES switcher lives in the nav; choice persists via `localStorage` |
 | `/#how`, `/#vaults`, `/#sources`, `/#agent`, `/#pricing` | anchor | Deep-linkable sections; `history.replaceState` updates URL on nav click |
 | `/vault`                | static    | 307 → `/vault/agent` (default tab)                                    |
-| `/vault/agent`          | SSG       | The Agent — sample QA bubbles with citations                          |
-| `/vault/sources`        | SSG       | Sources & Inbox — 8 source cards with curation progress               |
+| `/vault/agent`          | SSG       | The Agent — vault stats bar, full 4-QA transcript, suggestion chips, disabled "ask" input |
+| `/vault/sources`        | SSG       | Sources & Inbox — 8 source cards with curation progress + inbox list (47 pending, TAG/SKIP) |
 | `/vault/vault`          | SSG       | My Vault — placeholder ("This section unlocks in the next release loop —") |
-| `/vault/family`         | SSG       | Family Circle — owner + guardians + invite                            |
-| `/vault/releases`       | SSG       | Release Plans — birthdays, milestones, "if something happens"         |
-| `/vault/charter`        | SSG       | Century Charter — four commitments                                    |
+| `/vault/family`         | SSG       | Family Circle — 4 members (Mat, Karolina, Pawel, Maria) + 6×4 access matrix + invite CTA |
+| `/vault/releases`       | SSG       | Release Plans — birthdays / milestones / contingency, each with queued count + guardian sign-off chips |
+| `/vault/charter`        | SSG       | Century Charter — 6 commitments, each with signed date + version stamp |
 | `/checkout/1yr`         | SSG       | £99/year — reserved for Stripe checkout (V7)                          |
 | `/checkout/10yr`        | SSG       | £799 one-off — MOST POPULAR                                           |
 | `/checkout/century`     | SSG       | £2,999 one-off — Century vault                                        |
@@ -64,7 +64,9 @@ Seven `/loop` slices from scaffold → monetised. See [`GOAL.md`](./GOAL.md).
 | V1    | Scaffold + JSX landing                                               | ✓      |
 | V1.1  | SEO scaffolding (`app/robots.ts`, `app/sitemap.ts`)                  | ✓      |
 | V1.2  | Real routes: `/vault`, `/checkout/[plan]` — fix broken pricing CTAs  | ✓      |
-| V1.3  | i18n landing (EN/FR/PL/ES) + URL-per-tab vault dashboard             | ✓      |
+| V1.3  | i18n landing (EN/FR/PL/ES) — nav switcher + `?lang=` + localStorage  | ✓      |
+| V1.4  | URL-per-tab vault dashboard (`/vault/[section]` × 6)                 | ✓      |
+| V1.5  | Vault tabs enriched — stats, inbox, access matrix, sign-offs, charter dates | ✓      |
 | V2    | Red-green TDD (27/27 tests green)                                    | ✓      |
 | V3    | Supabase auth + `/admin` gate                                        | scaffolded (env-guarded) |
 | V4    | Mongo FLEET wiring                                                   | scaffolded (env-guarded) |
