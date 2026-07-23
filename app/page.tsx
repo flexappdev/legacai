@@ -3,8 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   C, FONT, SHADOW,
-  ASSET_SOURCES, VAULT_TYPES, PLANS, CHANNELS, AGENT_QA,
+  ASSET_SOURCES, VAULT_TYPES, CHANNELS, AGENT_QA,
 } from "@/components/legacai-tokens";
+import {
+  LOCALES, LOCALE_LABELS, TRANSLATIONS,
+  useLocale, localizedPlans,
+} from "@/components/legacai-i18n";
 import { Mark } from "@/components/mark";
 
 const SECTION_IDS = ["hero", "how", "vaults", "sources", "agent", "pricing"] as const;
@@ -120,6 +124,9 @@ function Bubble({ from, children, cites }: { from: "agent" | "user"; children: R
 }
 
 export default function LandingPage() {
+  const [locale, setLocale] = useLocale();
+  const t = TRANSLATIONS[locale];
+  const plans = localizedPlans(locale);
   // On mount, restore scroll position from hash so /#pricing links deep-link correctly.
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -162,13 +169,36 @@ export default function LandingPage() {
           </div>
         </a>
         <div style={{ display: "flex", gap: 26, alignItems: "center" }}>
-          {[["How It Works", "how"], ["Vaults", "vaults"], ["Sources", "sources"], ["Agent", "agent"], ["Pricing", "pricing"]].map(([label, id]) => (
+          {[[t.nav.how, "how"], [t.nav.vaults, "vaults"], [t.nav.sources, "sources"], [t.nav.agent, "agent"], [t.nav.pricing, "pricing"]].map(([label, id]) => (
             <a key={id} href={`#${id}`} onClick={(e) => { e.preventDefault(); goTo(id); }}
               style={{ color: C.muted, fontSize: 13, cursor: "pointer", fontFamily: FONT.body, fontWeight: 500, textDecoration: "none" }}>
               {label}
             </a>
           ))}
-          <LinkBtn href="/vault" primary style={{ padding: "10px 24px", fontSize: 12, letterSpacing: "0.08em" }}>OPEN LEGACAI</LinkBtn>
+          <div role="group" aria-label="Language" style={{ display: "flex", gap: 2, padding: 2, background: C.elev, borderRadius: 8, border: `1px solid ${C.borderSoft}` }}>
+            {LOCALES.map((l) => {
+              const active = l === locale;
+              return (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLocale(l)}
+                  aria-pressed={active}
+                  aria-label={`Set language to ${LOCALE_LABELS[l]}`}
+                  style={{
+                    padding: "4px 8px", borderRadius: 6, border: "none", cursor: "pointer",
+                    fontFamily: FONT.body, fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+                    background: active ? C.card : "transparent",
+                    color: active ? C.ink : C.muted,
+                    boxShadow: active ? SHADOW.card : "none",
+                  }}
+                >
+                  {LOCALE_LABELS[l]}
+                </button>
+              );
+            })}
+          </div>
+          <LinkBtn href="/vault" primary style={{ padding: "10px 24px", fontSize: 12, letterSpacing: "0.08em" }}>{t.cta.openLegacai}</LinkBtn>
         </div>
       </nav>
 
@@ -176,26 +206,24 @@ export default function LandingPage() {
       <section id="hero" style={{ minHeight: "90vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 40px 40px", textAlign: "center", position: "relative", scrollMarginTop: 80 }}>
         <div style={{ position: "absolute", top: "-10%", left: "50%", transform: "translateX(-50%)", width: "130vw", height: "70vh", background: "radial-gradient(ellipse at center, rgba(23,94,84,0.05) 0%, rgba(169,133,63,0.04) 45%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ position: "relative", zIndex: 5, maxWidth: 980, margin: "0 auto" }}>
-          <SectionLabel blue>Your Legacy AI Agent</SectionLabel>
+          <SectionLabel blue>{t.hero.label}</SectionLabel>
           <h1 style={{ fontFamily: FONT.display, fontSize: "clamp(40px, 5.5vw, 74px)", fontWeight: 700, color: C.ink, lineHeight: 1.08, margin: "0 0 28px" }}>
-            Storage keeps your files.<br />
-            <span style={{ color: C.accent, fontStyle: "italic" }}>Legacai keeps you.</span>
+            {t.hero.title1}<br />
+            <span style={{ color: C.accent, fontStyle: "italic" }}>{t.hero.title2}</span>
           </h1>
           <p style={{ fontFamily: FONT.body, fontSize: 17, color: C.muted, lineHeight: 1.75, maxWidth: 660, margin: "0 auto 44px" }}>
-            An AI agent trained on everything you choose to leave behind — documents, photographs, voice, journals,
-            even your ChatGPT and Claude conversations. For you, for the ones that matter, for now,
-            for the future — and to be remembered by it.
+            {t.hero.body}
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <LinkBtn href="/vault" primary blue>MEET YOUR AGENT</LinkBtn>
-            <LinkBtn href="#how" onClick={(e) => { e.preventDefault(); goTo("how"); }}>How It Works ↓</LinkBtn>
+            <LinkBtn href="/vault" primary blue>{t.cta.meetAgent}</LinkBtn>
+            <LinkBtn href="#how" onClick={(e) => { e.preventDefault(); goTo("how"); }}>{t.cta.howItWorks}</LinkBtn>
           </div>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 64 }}>
-            {ASSET_SOURCES.map(s => (
+            {ASSET_SOURCES.map((s, i) => (
               <a key={s.id} href="#sources" onClick={(e) => { e.preventDefault(); goTo("sources"); }}
                 style={{ width: 106, padding: "16px 8px", borderRadius: 14, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card, textAlign: "center", textDecoration: "none", color: "inherit", cursor: "pointer" }}>
                 <div style={{ fontSize: 24, marginBottom: 6 }}>{s.icon}</div>
-                <div style={{ fontFamily: FONT.body, fontSize: 10.5, fontWeight: 600, color: C.ink }}>{s.title}</div>
+                <div style={{ fontFamily: FONT.body, fontSize: 10.5, fontWeight: 600, color: C.ink }}>{t.sources.items[i].title}</div>
               </a>
             ))}
           </div>
@@ -205,28 +233,31 @@ export default function LandingPage() {
       {/* SOURCES */}
       <Section id="sources" style={{ padding: "96px 40px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <SectionLabel>Asset Sources</SectionLabel>
-          <SectionTitle>Everything that makes you, ingestible</SectionTitle>
-          <SectionSub>Eight sources feed one vault — including the first legacy importer for your ChatGPT, Claude and Gemini conversations.</SectionSub>
+          <SectionLabel>{t.sources.label}</SectionLabel>
+          <SectionTitle>{t.sources.title}</SectionTitle>
+          <SectionSub>{t.sources.sub}</SectionSub>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
-          {ASSET_SOURCES.map(s => (
-            <div key={s.id} style={{ padding: 26, borderRadius: 16, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                <span style={{ fontSize: 24 }}>{s.icon}</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: FONT.body, fontSize: 16, fontWeight: 700, color: C.ink }}>{s.title}</div>
-                  <div style={{ fontFamily: FONT.body, fontSize: 11, color: s.color, fontWeight: 600 }}>{s.subtitle}</div>
+          {ASSET_SOURCES.map((s, i) => {
+            const item = t.sources.items[i];
+            return (
+              <div key={s.id} style={{ padding: 26, borderRadius: 16, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                  <span style={{ fontSize: 24 }}>{s.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontFamily: FONT.body, fontSize: 16, fontWeight: 700, color: C.ink }}>{item.title}</div>
+                    <div style={{ fontFamily: FONT.body, fontSize: 11, color: s.color, fontWeight: 600 }}>{item.subtitle}</div>
+                  </div>
+                </div>
+                <p style={{ fontFamily: FONT.body, fontSize: 13, color: C.muted, lineHeight: 1.7, margin: "0 0 14px" }}>{item.desc}</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {item.formats.map(f => (
+                    <span key={f} style={{ padding: "5px 12px", borderRadius: 8, fontSize: 11, fontFamily: FONT.body, color: C.muted, background: C.bg, border: `1px solid ${C.borderSoft}` }}>{f}</span>
+                  ))}
                 </div>
               </div>
-              <p style={{ fontFamily: FONT.body, fontSize: 13, color: C.muted, lineHeight: 1.7, margin: "0 0 14px" }}>{s.desc}</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {s.formats.map(f => (
-                  <span key={f} style={{ padding: "5px 12px", borderRadius: 8, fontSize: 11, fontFamily: FONT.body, color: C.muted, background: C.bg, border: `1px solid ${C.borderSoft}` }}>{f}</span>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Section>
 
@@ -234,19 +265,22 @@ export default function LandingPage() {
       <Section id="vaults" style={{ padding: "96px 40px", background: C.card, borderTop: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 52 }}>
-            <SectionLabel>The Vault Principle</SectionLabel>
-            <SectionTitle>One principle. Three vaults.</SectionTitle>
-            <SectionSub>Everything worth keeping lives in a vault with an owner, a circle, and a horizon.</SectionSub>
+            <SectionLabel>{t.vaults.label}</SectionLabel>
+            <SectionTitle>{t.vaults.title}</SectionTitle>
+            <SectionSub>{t.vaults.sub}</SectionSub>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            {VAULT_TYPES.map(vt => (
-              <div key={vt.id} style={{ padding: 32, borderRadius: 18, background: C.bg, border: `1px solid ${C.border}` }}>
-                <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 30, color: C.gold, marginBottom: 16 }}>{vt.glyph}</div>
-                <h3 style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 700, color: C.ink, margin: "0 0 4px" }}>{vt.title}</h3>
-                <div style={{ fontFamily: FONT.body, fontSize: 11.5, color: C.accent, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>{vt.line}</div>
-                <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.muted, lineHeight: 1.75, margin: 0 }}>{vt.desc}</p>
-              </div>
-            ))}
+            {VAULT_TYPES.map((vt, i) => {
+              const item = t.vaults.items[i];
+              return (
+                <div key={vt.id} style={{ padding: 32, borderRadius: 18, background: C.bg, border: `1px solid ${C.border}` }}>
+                  <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 30, color: C.gold, marginBottom: 16 }}>{vt.glyph}</div>
+                  <h3 style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 700, color: C.ink, margin: "0 0 4px" }}>{item.title}</h3>
+                  <div style={{ fontFamily: FONT.body, fontSize: 11.5, color: C.accent, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>{item.line}</div>
+                  <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.muted, lineHeight: 1.75, margin: 0 }}>{item.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </Section>
@@ -254,17 +288,12 @@ export default function LandingPage() {
       {/* HOW */}
       <Section id="how" style={{ padding: "96px 40px", maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <SectionLabel>How It Works</SectionLabel>
-          <SectionTitle>Capture · Curate · Converse · Continue</SectionTitle>
-          <SectionSub>Most tools store your life. Legacai lets the people you love ask it questions — today, and long after.</SectionSub>
+          <SectionLabel>{t.how.label}</SectionLabel>
+          <SectionTitle>{t.how.title}</SectionTitle>
+          <SectionSub>{t.how.sub}</SectionSub>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-          {[
-            { n: "01", t: "Capture", d: "Connect every source of you — documents, photos, voice, journals, and your AI conversations." },
-            { n: "02", t: "Curate", d: "Tag each item Private, Family, Legacy or Public — and add the story only you can tell." },
-            { n: "03", t: "Converse", d: "Your Legacai Agent answers your family with citations to real vault items. Never invented." },
-            { n: "04", t: "Continue", d: "Release plans decide who receives what, and when. Your agent persists for your vault's horizon." },
-          ].map(s => (
+          {t.how.steps.map(s => (
             <div key={s.n} style={{ padding: 22, borderRadius: 14, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card }}>
               <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 28, color: C.accent, opacity: 0.5, marginBottom: 6 }}>{s.n}</div>
               <h3 style={{ fontFamily: FONT.display, fontSize: 19, fontWeight: 700, color: C.ink, margin: "0 0 8px" }}>{s.t}</h3>
@@ -277,25 +306,25 @@ export default function LandingPage() {
       {/* AGENT */}
       <Section id="agent" style={{ padding: "96px 40px", maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <SectionLabel blue>The Legacai Agent</SectionLabel>
-          <SectionTitle>Your family asks. You answer — always.</SectionTitle>
-          <SectionSub>Trained only on your curated vault. Every reply cites real items.</SectionSub>
+          <SectionLabel blue>{t.agent.label}</SectionLabel>
+          <SectionTitle>{t.agent.title}</SectionTitle>
+          <SectionSub>{t.agent.sub}</SectionSub>
         </div>
         <div style={{ maxWidth: 640, margin: "0 auto", background: C.card, border: "1px solid rgba(31,111,96,0.2)", borderRadius: 20, padding: 28, boxShadow: SHADOW.lift }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: `1px solid ${C.borderSoft}` }}>
             <Mark size={34} color={C.agent} radius={17} />
             <div>
-              <div style={{ fontFamily: FONT.body, fontSize: 14, fontWeight: 700, color: C.ink }}>Mat&apos;s Legacai</div>
-              <div style={{ fontFamily: FONT.body, fontSize: 10.5, color: C.success }}>● Live · cites every answer</div>
+              <div style={{ fontFamily: FONT.body, fontSize: 14, fontWeight: 700, color: C.ink }}>{t.agent.ownerName}</div>
+              <div style={{ fontFamily: FONT.body, fontSize: 10.5, color: C.success }}>{t.agent.liveTag}</div>
             </div>
           </div>
-          <Bubble from="user">What did Dad think about starting the business?</Bubble>
-          <Bubble from="agent" cites={AGENT_QA[2].cites}>{AGENT_QA[2].a}</Bubble>
+          <Bubble from="user">{t.agent.qa[2].q}</Bubble>
+          <Bubble from="agent" cites={AGENT_QA[2].cites}>{t.agent.qa[2].a}</Bubble>
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap", marginTop: 40 }}>
-          {CHANNELS.map(ch => (
+          {CHANNELS.map((ch, i) => (
             <div key={ch.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 100, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card, fontFamily: FONT.body, fontSize: 12, color: C.muted }}>
-              <span style={{ fontSize: 15 }}>{ch.icon}</span>{ch.label}
+              <span style={{ fontSize: 15 }}>{ch.icon}</span>{t.agent.channels[i].label}
             </div>
           ))}
         </div>
@@ -305,21 +334,21 @@ export default function LandingPage() {
       <Section id="pricing" style={{ padding: "96px 40px", background: C.card, borderTop: `1px solid ${C.border}` }}>
         <div style={{ maxWidth: 1020, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 52 }}>
-            <SectionLabel>Pricing</SectionLabel>
-            <SectionTitle>Pay for time, not features</SectionTitle>
-            <SectionSub>Every plan is the full platform. You choose how long your vault is guaranteed to survive.</SectionSub>
+            <SectionLabel>{t.pricing.label}</SectionLabel>
+            <SectionTitle>{t.pricing.title}</SectionTitle>
+            <SectionSub>{t.pricing.sub}</SectionSub>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, alignItems: "stretch" }}>
-            {PLANS.map(p => (
+            {plans.map(p => (
               <div key={p.slug} data-testid={`plan-${p.years}`} style={{
                 padding: 32, borderRadius: 20, position: "relative", display: "flex", flexDirection: "column",
                 background: p.highlight ? "linear-gradient(180deg, rgba(23,94,84,0.05), #FFFFFF)" : C.bg,
                 border: `1px solid ${p.highlight ? "rgba(23,94,84,0.35)" : C.border}`,
                 boxShadow: p.highlight ? SHADOW.lift : "none",
               }}>
-                {p.highlight && <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", padding: "4px 16px", borderRadius: 100, background: `linear-gradient(150deg, ${C.accent}, ${C.accentDeep})`, fontFamily: FONT.body, fontSize: 10, fontWeight: 700, color: "#FDFBF6", letterSpacing: "0.12em" }}>MOST POPULAR</div>}
+                {p.highlight && <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", padding: "4px 16px", borderRadius: 100, background: `linear-gradient(150deg, ${C.accent}, ${C.accentDeep})`, fontFamily: FONT.body, fontSize: 10, fontWeight: 700, color: "#FDFBF6", letterSpacing: "0.12em" }}>{t.pricing.mostPopular}</div>}
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 30, fontWeight: 700, color: p.name === "Century Vault" ? C.gold : C.accent }}>{p.years}<span style={{ fontSize: 14, color: C.dim, fontStyle: "normal" }}>yr</span></div>
+                  <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 30, fontWeight: 700, color: p.slug === "century" ? C.gold : C.accent }}>{p.years}<span style={{ fontSize: 14, color: C.dim, fontStyle: "normal" }}>{t.pricing.yrSuffix}</span></div>
                   <div style={{ fontFamily: FONT.body, fontSize: 12, fontWeight: 600, color: C.accent, letterSpacing: "0.1em", textTransform: "uppercase" }}>{p.name}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 4 }}>
@@ -335,7 +364,7 @@ export default function LandingPage() {
                     </div>
                   ))}
                 </div>
-                <LinkBtn href={`/checkout/${p.slug}`} primary={p.highlight} blue={p.name === "Century Vault"} style={{ width: "100%", textAlign: "center" }}>{p.cta}</LinkBtn>
+                <LinkBtn href={`/checkout/${p.slug}`} primary={p.highlight} blue={p.slug === "century"} style={{ width: "100%", textAlign: "center" }}>{p.cta}</LinkBtn>
               </div>
             ))}
           </div>
@@ -348,12 +377,12 @@ export default function LandingPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Mark size={30} radius={8} />
             <span style={{ fontFamily: FONT.display, fontSize: 17, fontWeight: 700, color: C.ink }}>Legacai</span>
-            <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.dim, marginLeft: 8, fontStyle: "italic" }}>Your legacy, alive.</span>
+            <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.dim, marginLeft: 8, fontStyle: "italic" }}>{t.footer.tagline}</span>
           </div>
           <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-            <Link href="/vault" style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted, textDecoration: "none" }}>My Vault</Link>
-            <a href="#pricing" onClick={(e) => { e.preventDefault(); goTo("pricing"); }} style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted, textDecoration: "none" }}>Pricing</a>
-            <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.dim }}>© 2026 Legacai</span>
+            <Link href="/vault" style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted, textDecoration: "none" }}>{t.cta.myVault}</Link>
+            <a href="#pricing" onClick={(e) => { e.preventDefault(); goTo("pricing"); }} style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted, textDecoration: "none" }}>{t.cta.pricingLink}</a>
+            <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.dim }}>{t.footer.copyright}</span>
           </div>
         </div>
       </footer>

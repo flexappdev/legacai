@@ -1,33 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import VaultPage from "@/app/vault/page";
 
-describe("Vault (/vault) — Dashboard", () => {
-  it("renders the sidebar nav with all sections", () => {
+describe("Vault (/vault) — placeholder", () => {
+  it("renders the release-loop placeholder card", () => {
     render(<VaultPage />);
-    expect(screen.getByTestId("nav-agent")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-sources")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-vault")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-family")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-releases")).toBeInTheDocument();
-    expect(screen.getByTestId("nav-charter")).toBeInTheDocument();
+    expect(screen.getByTestId("vault-placeholder")).toBeInTheDocument();
+    expect(screen.getByText(/This section unlocks in the next release loop/i)).toBeInTheDocument();
   });
 
-  it("switches vault type when Personal/Family/Business tabs are clicked", () => {
+  it("links back to home", () => {
     render(<VaultPage />);
-    fireEvent.click(screen.getByTestId("vault-personal"));
-    expect(screen.getByText(/PERSONAL VAULT — MAT/i)).toBeInTheDocument();
-  });
-
-  it("shows agent bubbles with citations by default", () => {
-    render(<VaultPage />);
-    expect(screen.getByText(/flat-deed-2019\.pdf/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/Story note/i).length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("navigates from Agent to Releases when nav item is clicked", () => {
-    render(<VaultPage />);
-    fireEvent.click(screen.getByTestId("nav-releases"));
-    expect(screen.getByText(/Who receives what, and when/i)).toBeInTheDocument();
+    const back = screen.getByRole("link", { name: /Home/i });
+    expect(back).toHaveAttribute("href", "/");
   });
 });
