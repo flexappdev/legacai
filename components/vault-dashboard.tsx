@@ -7,6 +7,8 @@ import {
 } from "@/components/legacai-tokens";
 import { NAV, type PageId } from "@/components/vault-nav";
 import { Mark } from "@/components/mark";
+import { YearGrid } from "@/components/legacai/YearGrid";
+import { DATA_YEAR } from "@/lib/date";
 
 type VaultKind = "personal" | "family" | "business";
 
@@ -20,6 +22,7 @@ const SUBTITLE: Record<PageId, string> = {
   agent: "Ask the vault anything — every answer cites its source",
   sources: "8 connected sources · items awaiting curation",
   vault: "Six life categories · guided items · fill at your pace",
+  timeline: `Your vault on a calendar — every item placed in time · ${DATA_YEAR}`,
   family: "The Siems circle · every member builds their own vault",
   releases: "Who receives what, and when — every plan reversible",
   charter: "The commitments that make a 100-year promise credible",
@@ -295,6 +298,27 @@ export default function VaultDashboard({ section }: { section: PageId }) {
             <div style={{ padding: 18, borderRadius: 14, background: C.card, border: `1px dashed ${C.border}`, textAlign: "center" }}>
               <span style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.accent, cursor: "pointer" }}>+ Invite a family member</span>
               <div style={{ fontFamily: FONT.body, fontSize: 11, color: C.muted, marginTop: 3 }}>Send them their own vault seat · they choose what to share back</div>
+            </div>
+          </div>
+        )}
+
+        {section === "timeline" && (
+          <div style={{ marginTop: 30 }}>
+            <div style={{ marginBottom: 20 }}>
+              <YearGrid year={DATA_YEAR} />
+            </div>
+            <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.borderSoft}`, display: "flex", alignItems: "center", gap: 16 }}>
+              <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted }}>See your whole life on one grid —</span>
+              <Link
+                href="/century"
+                style={{
+                  padding: "8px 18px", borderRadius: 8, fontFamily: FONT.body, fontSize: 12, fontWeight: 700,
+                  color: C.accent, background: C.accentDim, border: `1px solid ${C.accentGlow}`,
+                  textDecoration: "none", letterSpacing: "0.04em",
+                }}
+              >
+                Open Century View ◷
+              </Link>
             </div>
           </div>
         )}
