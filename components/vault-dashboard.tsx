@@ -30,6 +30,65 @@ const SUBTITLE: Record<PageId, string> = {
   charter: "The commitments that make a 100-year promise credible",
 };
 
+const CHIP_EXAMPLES = [
+  {
+    q: "What did Maria say about the wedding band?",
+    a: "From Maria's voice story and 48 tagged photos: she says the band played until 4am — it was the highlight of the night. Her story note reads: \"Papa didn't believe we'd afford a live band. I surprised him.\" Three photos show the first dance.",
+    cites: ["🎙️ Maria voice story", "▣ Wedding album"],
+  },
+  {
+    q: "Show me Dad's business notes",
+    a: "Across your AI conversation exports (62 convos, 2024–25), the clearest thread runs through March 2025: \"build things that feel like colleagues, not tools.\" The business manifesto draft (Jan 2026) opens with this exact phrase.",
+    cites: ["🤖 AI export · 62 convos", "📓 Business manifesto, Jan 2026"],
+  },
+  {
+    q: "Who is my guardian solicitor?",
+    a: "From your Guardian mandate and Contact sheet: Solicitor A. Nowak · ul. Floriańska, Kraków. Also listed: GP Dr. Wiśniewska (Health) and Karolina & Pawel hold the Guardian mandate with full release-plan access.",
+    cites: ["👥 Contact sheet", "§ Guardian mandate"],
+  },
+  {
+    q: "When did I last talk to Dr. Wiśniewska?",
+    a: "The last vault item from Dr. Wiśniewska is the health form update on 20 February 2026. Your AI conversation exports don't mention a visit after that date. The form is filed under Documents → Health.",
+    cites: ["📄 Health form · Feb 2026", "🤖 AI exports"],
+  },
+];
+
+function PremiumModal({ onClose }: { onClose: () => void }) {
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(31,42,55,0.52)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)" }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: C.card, borderRadius: 20, padding: "36px 40px", maxWidth: 440, width: "90%", boxShadow: SHADOW.lift, position: "relative" }}
+      >
+        <button
+          onClick={onClose}
+          style={{ position: "absolute", top: 16, right: 18, background: "none", border: "none", fontSize: 20, cursor: "pointer", color: C.muted, lineHeight: 1 }}
+        >✕</button>
+        <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 38, color: C.gold, marginBottom: 14 }}>◈</div>
+        <div style={{ fontFamily: FONT.display, fontSize: 23, fontWeight: 700, color: C.ink, marginBottom: 10 }}>Premium Feature</div>
+        <p style={{ fontFamily: FONT.body, fontSize: 13.5, color: C.muted, lineHeight: 1.72, marginBottom: 28 }}>
+          This feature is part of the Legacai Vault — a living archive built to outlast a lifetime.
+          Secure yours today or reach out to learn more.
+        </p>
+        <div style={{ display: "flex", gap: 12 }}>
+          <a
+            href="mailto:hello@legacai.com"
+            style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontFamily: FONT.body, fontSize: 13, fontWeight: 700, color: C.accent, background: C.accentDim, border: `1px solid ${C.accentGlow}`, textAlign: "center", textDecoration: "none", display: "block" }}
+          >Contact us</a>
+          <Link
+            href="/checkout/10yr"
+            onClick={onClose}
+            style={{ flex: 1, padding: "12px 0", borderRadius: 10, fontFamily: FONT.body, fontSize: 13, fontWeight: 700, color: "#FDFBF6", background: C.accent, textAlign: "center", textDecoration: "none", display: "block" }}
+          >Purchase Vault</Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Bubble({ from, children, cites }: { from: "agent" | "user"; children: React.ReactNode; cites?: string[] | null }) {
   const isAgent = from === "agent";
   return (
@@ -57,6 +116,9 @@ function Bubble({ from, children, cites }: { from: "agent" | "user"; children: R
 
 export default function VaultDashboard({ section }: { section: PageId }) {
   const [vault, setVault] = useState<VaultKind>("family");
+  const [premiumOpen, setPremiumOpen] = useState(false);
+  const [activeExample, setActiveExample] = useState<number | null>(null);
+  const openPremium = () => setPremiumOpen(true);
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", background: C.bg, color: C.ink, fontFamily: FONT.body }}>
@@ -64,6 +126,8 @@ export default function VaultDashboard({ section }: { section: PageId }) {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
       `}</style>
+
+      {premiumOpen && <PremiumModal onClose={() => setPremiumOpen(false)} />}
 
       {/* SIDEBAR */}
       <aside style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 252, background: C.card, borderRight: `1px solid ${C.border}`, display: "flex", flexDirection: "column", zIndex: 100, padding: "22px 0" }}>
@@ -117,7 +181,8 @@ export default function VaultDashboard({ section }: { section: PageId }) {
           })}
         </nav>
 
-        <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.borderSoft}` }}>
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.borderSoft}`, display: "flex", flexDirection: "column", gap: 8 }}>
+          <Link href="/admin" style={{ fontFamily: FONT.body, fontSize: 11, color: C.dim, textDecoration: "none", letterSpacing: "0.06em" }}>⚙ Admin</Link>
           <Link href="/" style={{ background: "none", border: "none", color: C.dim, textDecoration: "none", fontFamily: FONT.body, fontSize: 11, letterSpacing: "0.08em", padding: 0 }}>← Back to Home</Link>
         </div>
       </aside>
@@ -134,58 +199,92 @@ export default function VaultDashboard({ section }: { section: PageId }) {
         </h1>
         <p style={{ fontFamily: FONT.body, fontSize: 13, color: C.muted, margin: "6px 0 0" }}>{SUBTITLE[section]}</p>
 
+        {/* ── AGENT ── */}
         {section === "agent" && (
-          <div style={{ maxWidth: 720, marginTop: 30, display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
-              {[
-                { n: "34", l: "Documents" },
-                { n: "418", l: "Photos" },
-                { n: "1,240", l: "AI convos" },
-                { n: "62%", l: "Curated" },
-              ].map(s => (
-                <div key={s.l} style={{ padding: 14, borderRadius: 12, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card, textAlign: "center" }}>
-                  <div style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 700, color: C.ink }}>{s.n}</div>
-                  <div style={{ fontFamily: FONT.body, fontSize: 10.5, color: C.muted, letterSpacing: "0.06em", textTransform: "uppercase" }}>{s.l}</div>
-                </div>
-              ))}
-            </div>
+          <div style={{ marginTop: 30, display: "grid", gridTemplateColumns: activeExample !== null ? "3fr 2fr" : "1fr", gap: 24, alignItems: "start" }}>
 
-            <div style={{ background: C.card, border: "1px solid rgba(31,111,96,0.2)", borderRadius: 20, padding: 28, boxShadow: SHADOW.lift }}>
-              {AGENT_QA.map((qa, i) => (
-                <div key={i} style={{ marginBottom: i < AGENT_QA.length - 1 ? 4 : 0 }}>
-                  <Bubble from="user">{qa.q}</Bubble>
-                  <Bubble from="agent" cites={qa.cites}>{qa.a}</Bubble>
-                </div>
-              ))}
-
-              <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.borderSoft}` }}>
-                <div style={{ fontFamily: FONT.body, fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>Try asking</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {[
-                    "What did Maria say about the wedding band?",
-                    "Show me Dad's business notes",
-                    "Who is my guardian solicitor?",
-                    "When did I last talk to Dr. Wiśniewska?",
-                  ].map(q => (
-                    <span key={q} style={{ padding: "6px 12px", borderRadius: 10, background: C.bg, border: `1px solid ${C.borderSoft}`, fontFamily: FONT.body, fontSize: 11.5, color: C.muted, cursor: "pointer" }}>{q}</span>
-                  ))}
-                </div>
+            {/* Left: stats + chat + chips */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: activeExample !== null ? "none" : 720 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                {[
+                  { n: "34", l: "Documents" },
+                  { n: "418", l: "Photos" },
+                  { n: "1,240", l: "AI convos" },
+                  { n: "62%", l: "Curated" },
+                ].map(s => (
+                  <div key={s.l} style={{ padding: 14, borderRadius: 12, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.card, textAlign: "center" }}>
+                    <div style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 700, color: C.ink }}>{s.n}</div>
+                    <div style={{ fontFamily: FONT.body, fontSize: 10.5, color: C.muted, letterSpacing: "0.06em", textTransform: "uppercase" }}>{s.l}</div>
+                  </div>
+                ))}
               </div>
 
-              <div style={{ marginTop: 18, display: "flex", gap: 10, alignItems: "center", padding: "10px 14px", background: C.bg, borderRadius: 12, border: `1px solid ${C.borderSoft}` }}>
-                <span style={{ color: C.dim, fontSize: 16 }}>⌥</span>
-                <input
-                  type="text"
-                  placeholder="Ask your vault anything — every answer will cite the item"
-                  disabled
-                  style={{ flex: 1, border: "none", background: "transparent", fontFamily: FONT.body, fontSize: 13, color: C.ink, outline: "none" }}
-                />
-                <span style={{ fontFamily: FONT.body, fontSize: 10, color: C.dim, letterSpacing: "0.08em", textTransform: "uppercase" }}>Live in V4</span>
+              <div style={{ background: C.card, border: "1px solid rgba(31,111,96,0.2)", borderRadius: 20, padding: 28, boxShadow: SHADOW.lift }}>
+                {AGENT_QA.map((qa, i) => (
+                  <div key={i} style={{ marginBottom: i < AGENT_QA.length - 1 ? 4 : 0 }}>
+                    <Bubble from="user">{qa.q}</Bubble>
+                    <Bubble from="agent" cites={qa.cites}>{qa.a}</Bubble>
+                  </div>
+                ))}
+
+                <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.borderSoft}` }}>
+                  <div style={{ fontFamily: FONT.body, fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>Try asking</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {CHIP_EXAMPLES.map((ex, i) => (
+                      <button
+                        key={ex.q}
+                        onClick={() => setActiveExample(activeExample === i ? null : i)}
+                        style={{
+                          padding: "6px 12px", borderRadius: 10, cursor: "pointer",
+                          background: activeExample === i ? C.accentDim : C.bg,
+                          border: `1px solid ${activeExample === i ? C.accentGlow : C.borderSoft}`,
+                          fontFamily: FONT.body, fontSize: 11.5,
+                          color: activeExample === i ? C.accent : C.muted,
+                          fontWeight: activeExample === i ? 700 : 400,
+                        }}
+                      >{ex.q}</button>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  onClick={openPremium}
+                  style={{ marginTop: 18, display: "flex", gap: 10, alignItems: "center", padding: "10px 14px", background: C.bg, borderRadius: 12, border: `1px solid ${C.borderSoft}`, cursor: "pointer" }}
+                >
+                  <span style={{ color: C.dim, fontSize: 16 }}>⌥</span>
+                  <span style={{ flex: 1, fontFamily: FONT.body, fontSize: 13, color: C.dim }}>Ask your vault anything — every answer will cite the item</span>
+                  <span style={{ fontFamily: FONT.body, fontSize: 10, color: C.gold, letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", borderRadius: 6, background: C.goldDim, border: "1px solid rgba(169,133,63,0.2)" }}>Premium</span>
+                </div>
               </div>
             </div>
+
+            {/* Right: example answer panel */}
+            {activeExample !== null && (
+              <div style={{ background: C.card, border: `1px solid ${C.accentGlow}`, borderRadius: 20, padding: 24, boxShadow: SHADOW.lift, position: "sticky", top: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                  <div style={{ fontFamily: FONT.body, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", color: C.gold, textTransform: "uppercase" }}>Example answer</div>
+                  <button
+                    onClick={() => setActiveExample(null)}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: C.dim, fontSize: 16, borderRadius: 6, padding: "2px 6px" }}
+                  >✕</button>
+                </div>
+                <Bubble from="user">{CHIP_EXAMPLES[activeExample].q}</Bubble>
+                <Bubble from="agent" cites={CHIP_EXAMPLES[activeExample].cites}>
+                  {CHIP_EXAMPLES[activeExample].a}
+                </Bubble>
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.borderSoft}`, fontFamily: FONT.body, fontSize: 11, color: C.muted, lineHeight: 1.6 }}>
+                  Live answers powered by your real vault items — available in the full Legacai experience.
+                </div>
+                <button
+                  onClick={openPremium}
+                  style={{ marginTop: 14, width: "100%", padding: "11px 0", borderRadius: 10, fontFamily: FONT.body, fontSize: 12.5, fontWeight: 700, color: "#FDFBF6", background: C.accent, border: "none", cursor: "pointer" }}
+                >Unlock the Vault Agent →</button>
+              </div>
+            )}
           </div>
         )}
 
+        {/* ── SOURCES ── */}
         {section === "sources" && (
           <div style={{ marginTop: 30, maxWidth: 860 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 28 }}>
@@ -230,30 +329,37 @@ export default function VaultDashboard({ section }: { section: PageId }) {
                     <div style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.ink }}>{it.title}</div>
                     <div style={{ fontFamily: FONT.body, fontSize: 11, color: C.muted }}>{it.source} · {it.when}</div>
                   </div>
-                  <span style={{ padding: "5px 12px", borderRadius: 8, fontSize: 10.5, fontFamily: FONT.body, fontWeight: 700, color: C.accent, background: C.accentDim, letterSpacing: "0.08em" }}>TAG</span>
-                  <span style={{ padding: "5px 12px", borderRadius: 8, fontSize: 10.5, fontFamily: FONT.body, fontWeight: 700, color: C.dim, background: "transparent", border: `1px solid ${C.borderSoft}`, letterSpacing: "0.08em" }}>SKIP</span>
+                  <button onClick={openPremium} style={{ padding: "5px 12px", borderRadius: 8, fontSize: 10.5, fontFamily: FONT.body, fontWeight: 700, color: C.accent, background: C.accentDim, border: `1px solid rgba(23,94,84,0.2)`, cursor: "pointer", letterSpacing: "0.08em" }}>TAG</button>
+                  <button onClick={openPremium} style={{ padding: "5px 12px", borderRadius: 8, fontSize: 10.5, fontFamily: FONT.body, fontWeight: 700, color: C.dim, background: "transparent", border: `1px solid ${C.borderSoft}`, cursor: "pointer", letterSpacing: "0.08em" }}>SKIP</button>
                 </div>
               ))}
             </div>
           </div>
         )}
 
+        {/* ── VAULT ── */}
         {section === "vault" && (
           <div style={{ marginTop: 30, padding: 40, borderRadius: 20, background: C.card, border: `1px solid ${C.border}`, boxShadow: SHADOW.lift, maxWidth: 520, textAlign: "center" }}>
             <div style={{ fontFamily: FONT.display, fontStyle: "italic", fontSize: 40, color: C.gold, marginBottom: 16 }}>◈</div>
             <h2 style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 700, color: C.ink, margin: "0 0 10px" }}>The Vault</h2>
-            <p style={{ fontFamily: FONT.body, fontSize: 14, color: C.muted, lineHeight: 1.7, margin: 0 }}>
-              This section unlocks in the next release loop —
+            <p style={{ fontFamily: FONT.body, fontSize: 14, color: C.muted, lineHeight: 1.7, margin: "0 0 24px" }}>
+              Six life categories, guided prompts, and a vault that fills itself — available in the full Legacai experience.
             </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <a href="mailto:hello@legacai.com" style={{ padding: "11px 22px", borderRadius: 10, fontFamily: FONT.body, fontSize: 13, fontWeight: 700, color: C.accent, background: C.accentDim, border: `1px solid ${C.accentGlow}`, textDecoration: "none" }}>Contact us</a>
+              <button onClick={openPremium} style={{ padding: "11px 22px", borderRadius: 10, fontFamily: FONT.body, fontSize: 13, fontWeight: 700, color: "#FDFBF6", background: C.accent, border: "none", cursor: "pointer" }}>Purchase Vault</button>
+            </div>
           </div>
         )}
 
+        {/* ── CENTURY VIEW ── */}
         {section === "century" && (
           <div style={{ marginTop: 30 }}>
             <CenturyView year={DATA_YEAR} />
           </div>
         )}
 
+        {/* ── FAMILY ── */}
         {section === "family" && (
           <div style={{ marginTop: 30, maxWidth: 860 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 28 }}>
@@ -303,13 +409,17 @@ export default function VaultDashboard({ section }: { section: PageId }) {
               </div>
             </div>
 
-            <div style={{ padding: 18, borderRadius: 14, background: C.card, border: `1px dashed ${C.border}`, textAlign: "center" }}>
-              <span style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.accent, cursor: "pointer" }}>+ Invite a family member</span>
+            <button
+              onClick={openPremium}
+              style={{ width: "100%", padding: 18, borderRadius: 14, background: C.card, border: `1px dashed ${C.border}`, textAlign: "center", cursor: "pointer" }}
+            >
+              <div style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.accent }}>+ Invite a family member</div>
               <div style={{ fontFamily: FONT.body, fontSize: 11, color: C.muted, marginTop: 3 }}>Send them their own vault seat · they choose what to share back</div>
-            </div>
+            </button>
           </div>
         )}
 
+        {/* ── TIMELINE ── */}
         {section === "timeline" && (
           <div style={{ marginTop: 30 }}>
             <div style={{ marginBottom: 20 }}>
@@ -331,6 +441,7 @@ export default function VaultDashboard({ section }: { section: PageId }) {
           </div>
         )}
 
+        {/* ── RELEASES ── */}
         {section === "releases" && (
           <div style={{ marginTop: 30, display: "flex", flexDirection: "column", gap: 14, maxWidth: 720 }}>
             {[
@@ -381,13 +492,17 @@ export default function VaultDashboard({ section }: { section: PageId }) {
                 </div>
               </div>
             ))}
-            <div style={{ padding: 18, borderRadius: 14, background: C.card, border: `1px dashed ${C.border}`, textAlign: "center" }}>
-              <span style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.accent, cursor: "pointer" }}>+ New release plan</span>
+            <button
+              onClick={openPremium}
+              style={{ padding: 18, borderRadius: 14, background: C.card, border: `1px dashed ${C.border}`, textAlign: "center", cursor: "pointer", width: "100%" }}
+            >
+              <div style={{ fontFamily: FONT.body, fontSize: 13, fontWeight: 600, color: C.accent }}>+ New release plan</div>
               <div style={{ fontFamily: FONT.body, fontSize: 11, color: C.muted, marginTop: 3 }}>Every plan is reversible before the trigger fires</div>
-            </div>
+            </button>
           </div>
         )}
 
+        {/* ── CHARTER ── */}
         {section === "charter" && (
           <div style={{ marginTop: 30, maxWidth: 860 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 22 }}>
