@@ -77,7 +77,7 @@ export function CenturyView({ year = DATA_YEAR }: { year?: number }) {
         </div>
         {selYearHasData && (
           <Link href="/vault/timeline" style={{ fontFamily: FONT.body, fontSize: 11, color: C.accent, textDecoration: "none", marginLeft: "auto" }}>
-            Full calendar view →
+            ← Calendar view
           </Link>
         )}
       </div>

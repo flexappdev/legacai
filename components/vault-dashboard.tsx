@@ -8,6 +8,7 @@ import {
 import { NAV, type PageId } from "@/components/vault-nav";
 import { Mark } from "@/components/mark";
 import { YearGrid } from "@/components/legacai/YearGrid";
+import { CenturyView } from "@/components/legacai/CenturyView";
 import { DATA_YEAR } from "@/lib/date";
 
 type VaultKind = "personal" | "family" | "business";
@@ -23,6 +24,7 @@ const SUBTITLE: Record<PageId, string> = {
   sources: "8 connected sources · items awaiting curation",
   vault: "Six life categories · guided items · fill at your pace",
   timeline: `Your vault on a calendar — every item placed in time · ${DATA_YEAR}`,
+  century: "Your life on a single grid — 1940 to 2080, one dot per year",
   family: "The Siems circle · every member builds their own vault",
   releases: "Who receives what, and when — every plan reversible",
   charter: "The commitments that make a 100-year promise credible",
@@ -246,6 +248,12 @@ export default function VaultDashboard({ section }: { section: PageId }) {
           </div>
         )}
 
+        {section === "century" && (
+          <div style={{ marginTop: 30 }}>
+            <CenturyView year={DATA_YEAR} />
+          </div>
+        )}
+
         {section === "family" && (
           <div style={{ marginTop: 30, maxWidth: 860 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 28 }}>
@@ -310,7 +318,7 @@ export default function VaultDashboard({ section }: { section: PageId }) {
             <div style={{ marginTop: 24, paddingTop: 20, borderTop: `1px solid ${C.borderSoft}`, display: "flex", alignItems: "center", gap: 16 }}>
               <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted }}>See your whole life on one grid —</span>
               <Link
-                href="/century"
+                href="/vault/century"
                 style={{
                   padding: "8px 18px", borderRadius: 8, fontFamily: FONT.body, fontSize: 12, fontWeight: 700,
                   color: C.accent, background: C.accentDim, border: `1px solid ${C.accentGlow}`,

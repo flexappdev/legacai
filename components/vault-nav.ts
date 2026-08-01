@@ -3,6 +3,7 @@ export const NAV = [
   { id: "sources", glyph: "▤", label: "Sources & Inbox" },
   { id: "vault", glyph: "▣", label: "My Vault" },
   { id: "timeline", glyph: "◷", label: "Timeline" },
+  { id: "century", glyph: "◌", label: "Century View" },
   { id: "family", glyph: "◉", label: "Family Circle" },
   { id: "releases", glyph: "✉", label: "Release Plans" },
   { id: "charter", glyph: "§", label: "Century Charter" },
