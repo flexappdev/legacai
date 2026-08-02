@@ -114,11 +114,34 @@ function Bubble({ from, children, cites }: { from: "agent" | "user"; children: R
   );
 }
 
+interface Message { from: "user" | "agent"; text: string; cites?: string[] | null }
+
 export default function VaultDashboard({ section }: { section: PageId }) {
   const [vault, setVault] = useState<VaultKind>("family");
   const [premiumOpen, setPremiumOpen] = useState(false);
   const [activeExample, setActiveExample] = useState<number | null>(null);
+  const [agentInput, setAgentInput] = useState("");
+  const [agentLoading, setAgentLoading] = useState(false);
+  const [liveMessages, setLiveMessages] = useState<Message[]>([]);
   const openPremium = () => setPremiumOpen(true);
+
+  async function askAgent(e: React.FormEvent) {
+    e.preventDefault();
+    const q = agentInput.trim();
+    if (!q || agentLoading) return;
+    setAgentInput("");
+    setActiveExample(null);
+    setLiveMessages(prev => [...prev, { from: "user", text: q }]);
+    setAgentLoading(true);
+    try {
+      const res = await fetch("/api/agent/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q }) });
+      const data = await res.json();
+      setLiveMessages(prev => [...prev, { from: "agent", text: data.answer ?? data.error ?? "Sorry, something went wrong.", cites: data.cites }]);
+    } catch {
+      setLiveMessages(prev => [...prev, { from: "agent", text: "The agent is unavailable right now." }]);
+    }
+    setAgentLoading(false);
+  }
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", background: C.bg, color: C.ink, fontFamily: FONT.body }}>
@@ -227,6 +250,16 @@ export default function VaultDashboard({ section }: { section: PageId }) {
                   </div>
                 ))}
 
+                {liveMessages.map((m, i) => (
+                  <Bubble key={`live-${i}`} from={m.from} cites={m.cites}>{m.text}</Bubble>
+                ))}
+                {agentLoading && (
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "8px 0" }}>
+                    <Mark size={30} color={C.agent} radius={15} />
+                    <span style={{ fontFamily: FONT.body, fontSize: 12, color: C.muted }}>Searching the vault…</span>
+                  </div>
+                )}
+
                 <div style={{ marginTop: 20, paddingTop: 18, borderTop: `1px solid ${C.borderSoft}` }}>
                   <div style={{ fontFamily: FONT.body, fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>Try asking</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -247,14 +280,22 @@ export default function VaultDashboard({ section }: { section: PageId }) {
                   </div>
                 </div>
 
-                <div
-                  onClick={openPremium}
-                  style={{ marginTop: 18, display: "flex", gap: 10, alignItems: "center", padding: "10px 14px", background: C.bg, borderRadius: 12, border: `1px solid ${C.borderSoft}`, cursor: "pointer" }}
-                >
-                  <span style={{ color: C.dim, fontSize: 16 }}>⌥</span>
-                  <span style={{ flex: 1, fontFamily: FONT.body, fontSize: 13, color: C.dim }}>Ask your vault anything — every answer will cite the item</span>
-                  <span style={{ fontFamily: FONT.body, fontSize: 10, color: C.gold, letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", borderRadius: 6, background: C.goldDim, border: "1px solid rgba(169,133,63,0.2)" }}>Premium</span>
-                </div>
+                <form onSubmit={askAgent} style={{ marginTop: 18, display: "flex", gap: 10, alignItems: "center", padding: "10px 14px", background: C.bg, borderRadius: 12, border: `1px solid ${C.borderSoft}` }}>
+                  <span style={{ color: C.dim, fontSize: 16 }}>❖</span>
+                  <input
+                    type="text"
+                    value={agentInput}
+                    onChange={e => setAgentInput(e.target.value)}
+                    placeholder="Ask your vault anything — every answer will cite the item"
+                    disabled={agentLoading}
+                    style={{ flex: 1, border: "none", background: "transparent", fontFamily: FONT.body, fontSize: 13, color: C.ink, outline: "none" }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={agentLoading || !agentInput.trim()}
+                    style={{ padding: "5px 12px", borderRadius: 8, fontFamily: FONT.body, fontSize: 11, fontWeight: 700, color: "#FDFBF6", background: agentLoading || !agentInput.trim() ? C.dim : C.accent, border: "none", cursor: agentLoading || !agentInput.trim() ? "default" : "pointer" }}
+                  >{agentLoading ? "…" : "Ask"}</button>
+                </form>
               </div>
             </div>
 
