@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { C, FONT, SHADOW, PLANS, planBySlug, VAULT_TYPES } from "@/components/legacai-tokens";
 import { Mark } from "@/components/mark";
+import { CheckoutButton } from "@/components/checkout-button";
 
 export async function generateStaticParams() {
   return PLANS.map((p) => ({ plan: p.slug }));
@@ -132,32 +133,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ plan:
                 {p.slug === "1yr" ? "then yearly · cancel anytime" : "one payment · no renewals for the full horizon"}
               </div>
 
-              <div style={{
-                padding: "14px 16px", borderRadius: 12, background: C.goldDim,
-                border: "1px solid rgba(169,133,63,0.3)", marginBottom: 16,
-              }}>
-                <div style={{ fontFamily: FONT.body, fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "#8A7440", marginBottom: 4 }}>
-                  STRIPE CHECKOUT · V7
-                </div>
-                <div style={{ fontFamily: FONT.body, fontSize: 11.5, color: "#8A7440", lineHeight: 1.55 }}>
-                  Live payments arrive in the V7 monetisation slice. Until then, this is the reserved
-                  checkout route — deep-linkable, cite-able, and ready for Stripe to plug in.
-                </div>
-              </div>
-
-              <Link href="/vault" style={{
-                display: "block", textAlign: "center", padding: "16px 0", borderRadius: 10, width: "100%",
-                background: `linear-gradient(150deg, ${C.accent}, ${C.accentDeep})`, color: "#FDFBF6",
-                fontFamily: FONT.body, fontSize: 14, fontWeight: 700, letterSpacing: "0.05em",
-                textDecoration: "none",
-              }}>PREVIEW MY VAULT →</Link>
-
-              <div style={{ display: "flex", justifyContent: "center", gap: 14, marginTop: 16, fontFamily: FONT.body, fontSize: 10, color: C.dim, flexWrap: "wrap" }}>
-                <span>▣ AES-256</span><span>§ Guardian mandates</span><span>✉ Export covenant</span>
-              </div>
-              <div style={{ textAlign: "center", marginTop: 10, fontFamily: FONT.body, fontSize: 10.5, color: C.dim }}>
-                14-day full refund · payment held in escrow until vault opens
-              </div>
+              <CheckoutButton plan={p.slug} price={p.price} />
             </div>
           </div>
         </div>

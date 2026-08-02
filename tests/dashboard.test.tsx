@@ -32,9 +32,10 @@ describe("VaultDashboard — URL-driven sections", () => {
     expect(screen.getAllByText(/Story note/i).length).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows the release-loop placeholder only on section=vault", () => {
+  it("shows vault premium CTAs on section=vault", () => {
     render(<VaultDashboard section="vault" />);
-    expect(screen.getByText(/This section unlocks in the next release loop/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Six life categories/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("button", { name: /Purchase Vault/i })).toBeInTheDocument();
   });
 
   it("shows real content on section=releases", () => {
