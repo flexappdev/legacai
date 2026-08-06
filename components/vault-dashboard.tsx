@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { track } from "@/lib/analytics";
 import {
   C, FONT, SHADOW,
   AGENT_QA, ASSET_SOURCES,
@@ -133,6 +134,7 @@ export default function VaultDashboard({ section }: { section: PageId }) {
     setActiveExample(null);
     setLiveMessages(prev => [...prev, { from: "user", text: q }]);
     setAgentLoading(true);
+    track("agent_asked", { question_length: q.length });
     try {
       const res = await fetch("/api/agent/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q }) });
       const data = await res.json();
@@ -206,6 +208,7 @@ export default function VaultDashboard({ section }: { section: PageId }) {
 
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.borderSoft}`, display: "flex", flexDirection: "column", gap: 8 }}>
           <Link href="/admin" style={{ fontFamily: FONT.body, fontSize: 11, color: C.dim, textDecoration: "none", letterSpacing: "0.06em" }}>⚙ Admin</Link>
+          <Link href="/api/auth/signout" style={{ fontFamily: FONT.body, fontSize: 11, color: C.dim, textDecoration: "none", letterSpacing: "0.06em" }}>→ Sign out</Link>
           <Link href="/" style={{ background: "none", border: "none", color: C.dim, textDecoration: "none", fontFamily: FONT.body, fontSize: 11, letterSpacing: "0.08em", padding: 0 }}>← Back to Home</Link>
         </div>
       </aside>

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { C, FONT } from "@/components/legacai-tokens";
+import { track } from "@/lib/analytics";
 
 export function CheckoutButton({ plan, price }: { plan: string; price: string }) {
   const [loading, setLoading] = useState(false);
@@ -9,6 +10,7 @@ export function CheckoutButton({ plan, price }: { plan: string; price: string })
   async function handlePay() {
     setLoading(true);
     setErr(null);
+    track("plan_selected", { plan, price });
     try {
       const res = await fetch(`/api/checkout/${plan}`, { method: "POST" });
       const data = await res.json();

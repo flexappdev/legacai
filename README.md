@@ -5,7 +5,7 @@ photographs, voice, journals, and even your ChatGPT and Claude conversations.
 For you, for the ones that matter, for now, for the future.
 
 - **Local:** http://localhost:17010
-- **Prod:** TBA (Vercel `matsiems` scope · deploy blocked at CLI 403, see BACKLOG.md § V6)
+- **Prod:** https://legacai.vercel.app (Vercel `matsiems` scope)
 - **Repo:** [flexappdev/legacai](https://github.com/flexappdev/legacai)
 - **Fleet role:** site #38 in `~/APPS/` (see [REPOS.md](../REPOS.md))
 
@@ -15,17 +15,25 @@ For you, for the ones that matter, for now, for the future.
 |-------------------------|-----------|-----------------------------------------------------------------------|
 | `/`                     | static    | Landing — hero, sources, vaults, how-it-works, agent sample, pricing  |
 | `/?lang=fr\|pl\|es`     | static    | Same landing, translated — EN/FR/PL/ES switcher lives in the nav; choice persists via `localStorage` |
-| `/#how`, `/#vaults`, `/#sources`, `/#agent`, `/#pricing` | anchor | Deep-linkable sections; `history.replaceState` updates URL on nav click |
+| `/#how`, `/#vaults`, `/#sources`, `/#agent`, `/#pricing` | anchor | Deep-linkable sections |
+| `/login`                | static    | Magic-link login (Supabase OTP → email → `/auth/callback`)           |
+| `/auth/callback`        | dynamic   | OTP exchange → redirects to `?next=` param (default `/vault/agent`)  |
 | `/vault`                | static    | 307 → `/vault/agent` (default tab)                                    |
-| `/vault/agent`          | SSG       | The Agent — vault stats bar, full 4-QA transcript, suggestion chips, disabled "ask" input |
-| `/vault/sources`        | SSG       | Sources & Inbox — 8 source cards with curation progress + inbox list (47 pending, TAG/SKIP) |
-| `/vault/vault`          | SSG       | My Vault — placeholder ("This section unlocks in the next release loop —") |
-| `/vault/family`         | SSG       | Family Circle — 4 members (Mat, Karolina, Pawel, Maria) + 6×4 access matrix + invite CTA |
-| `/vault/releases`       | SSG       | Release Plans — birthdays / milestones / contingency, each with queued count + guardian sign-off chips |
-| `/vault/charter`        | SSG       | Century Charter — 6 commitments, each with signed date + version stamp |
-| `/checkout/1yr`         | SSG       | £99/year — reserved for Stripe checkout (V7)                          |
+| `/vault/agent`          | SSG       | The Agent — vault stats bar, live Q&A, suggestion chips, real ask input |
+| `/vault/sources`        | SSG       | Sources & Inbox — 8 source cards with curation progress + inbox list  |
+| `/vault/vault`          | SSG       | My Vault — six life categories with Premium CTAs                      |
+| `/vault/family`         | SSG       | Family Circle — 4 members + 6×4 access matrix + invite CTA           |
+| `/vault/releases`       | SSG       | Release Plans — birthdays / milestones / contingency + sign-offs      |
+| `/vault/charter`        | SSG       | Century Charter — 6 commitments, each with signed date + version stamp|
+| `/vault/century`        | SSG       | Century View — decade grid + YearGrid heatmap                         |
+| `/vault/welcome`        | static    | Stripe success landing — 3-week onboarding plan + "Open my Vault →"  |
+| `/checkout/1yr`         | SSG       | £99/year — Stripe checkout (subscription)                             |
 | `/checkout/10yr`        | SSG       | £799 one-off — MOST POPULAR                                           |
 | `/checkout/century`     | SSG       | £2,999 one-off — Century vault                                        |
+| `/admin`                | static    | Admin dashboard (gated: mat@matsiems.com only via Supabase middleware)|
+| `/api/agent/ask`        | dynamic   | Anthropic claude-sonnet-4-6 proxy — vault context system prompt, returns `{ answer, cites[] }` |
+| `/api/checkout/[plan]`  | dynamic   | Stripe session creation → returns `{ url }` for redirect              |
+| `/api/auth/signout`     | dynamic   | Supabase sign-out → redirects to `/`                                  |
 | `/icon`, `/apple-icon`  | generated | Programmatic Legacai L monogram (next/og)                             |
 | `/robots.txt`, `/sitemap.xml` | generated | SEO scaffolding                                                 |
 
@@ -34,13 +42,15 @@ Each vault sidebar item is a real `<Link>` — tabs are bookmarkable, back/forwa
 ## Stack
 
 - Next.js 16 + React 19 + TypeScript + Tailwind v4 (Turbopack)
-- **Auth:** Supabase (`@supabase/ssr`), `/admin` allowlist → `mat@matsiems.com`
+- **Auth:** Supabase (`@supabase/ssr`) magic-link OTP; `/admin` allowlist → `mat@matsiems.com`
+- **AI:** Anthropic claude-sonnet-4-6 proxy at `/api/agent/ask`; env-guarded (503 if no key)
 - **DB:** Mongo Atlas — shared FLEET cluster, `app='legacai'` discriminator
-- **i18n:** EN/FR/PL/ES dictionaries in `components/legacai-i18n.ts`; `useLocale()` hook reads `?lang=` then `localStorage`, defaults to EN
-- **Analytics:** GA4 wrapper (`lib/analytics.tsx`), gated on `NEXT_PUBLIC_GA_ID`
+- **Payments:** Stripe checkout at `/api/checkout/[plan]`; env-guarded; subscription (1yr) + one-off (10yr/century)
+- **i18n:** EN/FR/PL/ES dictionaries in `components/legacai-i18n.ts`; `useLocale()` hook
+- **Analytics:** GA4 wrapper (`lib/analytics.tsx`) — `agent_asked`, `plan_selected` events; gated on `NEXT_PUBLIC_GA_ID`
+- **Consent:** PECR banner (`components/consent-banner.tsx`) — localStorage + gtag consent update
 - **Icon:** `app/icon.tsx` + `app/apple-icon.tsx` — L mark rendered via `next/og`
 - **Deploy:** Vercel (`matsiems` scope)
-- **Payments (V7):** Stripe checkout wired to `/checkout/[plan]` routes
 
 ## Getting started
 
@@ -49,15 +59,16 @@ cd ~/APPS/legacai
 npm install
 npm test              # 27 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase
 npm run typecheck     # tsc --noEmit
-npm run build         # production build smoke (10 routes prerender)
+npm run build         # production build smoke
 npm run dev           # local dev on :17010
 ```
 
 Env is synced from `~/context-2026/agents/.env` into `.env.local` (git-ignored).
+To activate AI: set `ANTHROPIC_API_KEY` in Vercel env vars.
+To activate Stripe: set `STRIPE_SECRET_KEY` + `STRIPE_PRICE_1YR` / `STRIPE_PRICE_10YR` / `STRIPE_PRICE_CENTURY`.
+To activate GA4: `/abc-ga sync legacai G-XXXX`.
 
 ## Roadmap
-
-Seven `/loop` slices from scaffold → monetised. See [`GOAL.md`](./GOAL.md).
 
 | V     | Slice                                                                | Status |
 |-------|----------------------------------------------------------------------|--------|
@@ -66,13 +77,17 @@ Seven `/loop` slices from scaffold → monetised. See [`GOAL.md`](./GOAL.md).
 | V1.2  | Real routes: `/vault`, `/checkout/[plan]` — fix broken pricing CTAs  | ✓      |
 | V1.3  | i18n landing (EN/FR/PL/ES) — nav switcher + `?lang=` + localStorage  | ✓      |
 | V1.4  | URL-per-tab vault dashboard (`/vault/[section]` × 6)                 | ✓      |
-| V1.5  | Vault tabs enriched — stats, inbox, access matrix, sign-offs, charter dates | ✓      |
+| V1.5  | Vault tabs enriched — stats, inbox, access matrix, sign-offs, charter| ✓      |
 | V2    | Red-green TDD (27/27 tests green)                                    | ✓      |
-| V3    | Supabase auth + `/admin` gate                                        | scaffolded (env-guarded) |
-| V4    | Mongo FLEET wiring                                                   | scaffolded (env-guarded) |
-| V5    | GA4 + Consent Mode v2                                                | wrapper ready — flip via `/abc-ga sync legacai G-XXXX` |
-| V6    | Vercel deploy                                                        | blocked — see `scripts/deploy.sh` |
-| V7    | Stripe monetisation                                                  | routes reserved at `/checkout/[plan]` |
+| V2.1  | Supabase magic-link auth + `/login` + `/auth/callback`               | ✓      |
+| V2.2  | Anthropic agent proxy `/api/agent/ask` + real vault Q&A              | ✓      |
+| V2.3  | Stripe checkout API + `CheckoutButton` + `/vault/welcome`            | ✓      |
+| V2.4  | PECR consent banner + GA4 events (`agent_asked`, `plan_selected`)    | ✓      |
+| V2.5  | Sign-out route + admin dashboard                                     | ✓      |
+| V3    | Supabase RLS + real vault entries per user                           | next   |
+| V4    | Mongo FLEET wiring (live vault entries in DB)                        | next   |
+| V5    | GA4 live (flip via `/abc-ga sync legacai G-XXXX`)                   | env-gated |
+| V6    | Stripe live keys                                                     | env-gated |
 
 Full task list in [`BACKLOG.md`](./BACKLOG.md).
 

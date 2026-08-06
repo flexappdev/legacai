@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Mark } from "@/components/mark";
 import { C, FONT, SHADOW } from "@/components/legacai-tokens";
 import { createClient, supabaseConfigured } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? "/vault/agent";
   const error = searchParams.get("error");
@@ -126,5 +126,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
