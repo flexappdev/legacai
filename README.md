@@ -57,7 +57,7 @@ Each vault sidebar item is a real `<Link>` — tabs are bookmarkable, back/forwa
 ```bash
 cd ~/APPS/legacai
 npm install
-npm test              # 27 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase
+npm test              # 33 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase, models, export
 npm run typecheck     # tsc --noEmit
 npm run build         # production build smoke
 npm run dev           # local dev on :17010
@@ -65,8 +65,9 @@ npm run dev           # local dev on :17010
 
 Env is synced from `~/context-2026/agents/.env` into `.env.local` (git-ignored).
 To activate AI: set `ANTHROPIC_API_KEY` in Vercel env vars.
-To activate Stripe: set `STRIPE_SECRET_KEY` + `STRIPE_PRICE_1YR` / `STRIPE_PRICE_10YR` / `STRIPE_PRICE_CENTURY`.
+To activate Stripe: set `STRIPE_SECRET_KEY` + `STRIPE_PRICE_1YR` / `STRIPE_PRICE_10YR` / `STRIPE_PRICE_CENTURY` + `STRIPE_WEBHOOK_SECRET`.
 To activate GA4: `/abc-ga sync legacai G-XXXX`.
+To seed demo vault: `MONGODB_URI=... npx tsx scripts/seed-vault.ts`.
 
 ## Roadmap
 
@@ -84,10 +85,13 @@ To activate GA4: `/abc-ga sync legacai G-XXXX`.
 | V2.3  | Stripe checkout API + `CheckoutButton` + `/vault/welcome`            | ✓      |
 | V2.4  | PECR consent banner + GA4 events (`agent_asked`, `plan_selected`)    | ✓      |
 | V2.5  | Sign-out route + admin dashboard                                     | ✓      |
-| V3    | Supabase RLS + real vault entries per user                           | next   |
-| V4    | Mongo FLEET wiring (live vault entries in DB)                        | next   |
-| V5    | GA4 live (flip via `/abc-ga sync legacai G-XXXX`)                   | env-gated |
-| V6    | Stripe live keys                                                     | env-gated |
+| V3    | Mongo FLEET models (VaultEntry/Asset/Release) + `/api/vault/entries` | ✓      |
+| V4    | Export covenant `/api/export/[vaultId]` JSON+CSV, Stripe webhook     | ✓      |
+| V5    | Supabase RLS + real vault isolation per user                         | next   |
+| V6    | GA4 live (flip via `/abc-ga sync legacai G-XXXX`)                   | env-gated |
+| V7    | Stripe live keys + webhook registered in dashboard                   | env-gated |
+| V8    | S3 uploads + voice capture                                           | next   |
+| V9    | Resend welcome + weekly capture drip                                 | next   |
 
 Full task list in [`BACKLOG.md`](./BACKLOG.md).
 
