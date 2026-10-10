@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://legacai.app/schemas/v1/event.schema.json",
+  "title": "Event (one line of events.jsonl)",
+  "description": "Append-only log. Never rewritten; deletions leave a tombstone with no content.",
+  "type": "object",
+  "required": ["id", "type", "at", "actor", "targets"],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/id" },
+    "type": { "enum": ["import", "derive", "review", "promote", "correct", "redact", "seal", "delete", "release", "grant", "revoke", "consent", "fixity-check", "migrate"] },
+    "at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "actor": { "$ref": "common.schema.json#/$defs/actor" },
+    "targets": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "approvals": { "type": "array", "items": { "type": "string" }, "description": "Guardian person ids, for quorum actions." },
+    "note": { "type": "string" }
+  }
+}
