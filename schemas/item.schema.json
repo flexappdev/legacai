@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://legacai.app/schemas/v1/item.schema.json",
+  "title": "INPUT item sidecar (<file>.meta.json)",
+  "description": "Metadata and provenance for one immutable original in INPUT/.",
+  "type": "object",
+  "required": ["id", "layer", "file", "sha256", "mimeType", "kind", "capturedAt", "importedAt", "source", "importer", "consentBasis", "sensitivity", "scope"],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/id" },
+    "layer": { "const": "input" },
+    "file": { "type": "string", "description": "Path of the original, relative to the vault root." },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "mimeType": { "type": "string" },
+    "kind": { "enum": ["doc", "photo", "audio", "video", "ai", "journal", "book"] },
+    "originalName": { "type": "string" },
+    "capturedAt": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "importedAt": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "source": { "type": "string", "description": "Device, service or export the original came from." },
+    "importer": { "$ref": "common.schema.json#/$defs/actor" },
+    "consentBasis": { "$ref": "common.schema.json#/$defs/consentBasis" },
+    "sensitivity": { "$ref": "common.schema.json#/$defs/sensitivity" },
+    "scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "people": { "type": "array", "items": { "type": "string" }, "description": "Person ids the item concerns." },
+    "supersedes": { "type": "string", "description": "Item id this corrects; the old item is kept." }
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "id": "person_alex",
+    "displayName": "Alex Example",
+    "living": true,
+    "relationship": "owner",
+    "consents": [
+      { "purpose": "store", "scope": "family", "given": true, "at": "2026-10-10T09:00:00Z" },
+      { "purpose": "agent-context", "scope": "family", "given": true, "at": "2026-10-10T09:00:00Z" }
+    ]
+  },
+  { "id": "person_sam", "displayName": "Sam Example", "living": true, "relationship": "spouse, guardian", "consents": [] },
+  { "id": "person_robin", "displayName": "Robin Example", "living": true, "relationship": "sibling, guardian", "consents": [] },
+  { "id": "person_jo", "displayName": "Jo Example", "living": "unknown", "relationship": "family friend, guardian", "consents": [] }
+]

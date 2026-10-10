@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://legacai.app/schemas/v1/common.schema.json",
+  "title": "LegacAI shared definitions",
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z]+_[A-Za-z0-9-]+$", "description": "Prefixed id, e.g. item_2026-10-10-journal, note_lesson-1, person_alex." },
+    "scope": { "enum": ["personal", "family", "business", "country", "worldwide"] },
+    "horizon": { "enum": [100, 1000, 10000], "description": "Preservation horizon in years." },
+    "layer": { "enum": ["input", "live", "wiki"] },
+    "sensitivity": { "enum": ["public", "shared", "family", "private", "sealed"] },
+    "consentBasis": { "enum": ["self", "consented", "public-record", "legitimate-family-interest", "unknown"] },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "actor": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "enum": ["person", "agent"] },
+        "id": { "type": "string" },
+        "onBehalfOf": { "type": "string", "description": "Required when type is agent: the person the agent acts for." },
+        "model": { "type": "string", "description": "Agent model and prompt version, so the note can be re-derived." }
+      },
+      "if": { "properties": { "type": { "const": "agent" } } },
+      "then": { "required": ["onBehalfOf"] }
+    }
+  }
+}
