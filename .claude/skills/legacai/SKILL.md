@@ -38,7 +38,7 @@ When a reserved decision is needed: one question, 2 to 4 options, one consequenc
 | `revenue` | sales, pricing, conversion, funnel | Find the biggest funnel leak (visit → ask → checkout → paid), propose or ship one fix, measure it |
 | `costs` | spend, bills, "too expensive" | Line-item run costs, flag waste (idle services, token-heavy prompts, oversized plans), cut what needs no approval |
 | `automate` | "automate X", repeated manual work | Turn it into a routine, skill or script with a health check; log it in the automation register |
-| `ship` | "build next", "next V" | Next BACKLOG slice ranked by revenue or cost impact; red-green TDD; `npm test && npm run typecheck && npm run build`; draft PR |
+| `ship` | "build next", "next V" | Next BACKLOG slice ranked by revenue or cost impact; red-green TDD; `npm test && npm run typecheck && npm run build`; commit `feat(vX): …`; draft PR |
 | `capture` | journal, voice note, transcript | Hand to `legacai-djai` |
 | `review` | goals, week, year, lessons | Hand to `legacai-prodgame` |
 | `sweep` | "sweep", new files in `vault/input/` | Hand to `legacai-sweep` |
@@ -57,7 +57,8 @@ When a reserved decision is needed: one question, 2 to 4 options, one consequenc
 
 ## Vault model (product core)
 
-- **Scopes:** personal · family · business · country · humanity. **Horizons:** 100 · 1,000 · 10,000 years.
+- **Scopes:** personal · family · business · country · humanity; each item has one owning scope plus optional shared scopes.
+- **Horizons:** 100 · 1,000 · 10,000 years; the horizon sets format and redundancy (see `legacai-horizon`).
 - **Layers:** INPUT (raw, append-only) → LIVE (current) → WIKI (durable, cited). **Feeders:** DJAI and ProdGame.
 - **Canonical home:** `flexappdev/legacai`. Private source material never lives there.
 
@@ -65,7 +66,7 @@ When a reserved decision is needed: one question, 2 to 4 options, one consequenc
 
 - Every number in a board pack and every agent answer cites its source. No unattributed claims.
 - Never write to `vault/input/`, never delete from `vault/wiki/`.
-- Private material (living people's names, health, finance, addresses) never enters public docs, commits, PR bodies or the demo corpus.
+- Private material (living people's names, health, finance, addresses) never enters public docs, commits, PR bodies or the demo corpus. Use placeholders.
 - Living people's data needs recorded consent before it leaves the personal scope.
 - Export-anytime covenant: everything stored is exportable in an open format.
 - Env-guarded everywhere. Revenue never at the cost of trust: no dark patterns, no consent shortcuts.
