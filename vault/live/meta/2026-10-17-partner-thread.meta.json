@@ -1,0 +1,18 @@
+{
+  "id": "2026-10-17-partner-thread",
+  "scope": "family",
+  "sharedScopes": ["personal"],
+  "horizon": 100,
+  "kind": "ai-chat",
+  "visibility": "private",
+  "provenance": {
+    "surface": "claude.ai project thread (claude-legacai)",
+    "captureDate": "2026-10-17",
+    "importDate": "2026-10-31",
+    "author": "mat",
+    "originalPath": "private:legacai-private/input/2026-10-17-partner-thread.md",
+    "sha1": "6332b907329948c9ed125849f46427ac71d115b3"
+  },
+  "people": ["p-partner-01"],
+  "consent": { "p-partner-01": "pending" }
+}
