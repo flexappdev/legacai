@@ -21,6 +21,7 @@ describe("Export endpoint — export-anytime covenant", () => {
     expect(data.app).toBe("legacai");
     expect(data.entries.length).toBeGreaterThan(0);
     expect(data.version).toBe("1.0");
+    expect(data.schema).toContain("docs/export-schema.md");
   });
 
   it("returns CSV when Accept: text/csv is set", async () => {
