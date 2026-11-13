@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMongoose, APP_ID } from "@/lib/mongoose";
 import { getVaultEntryModel } from "@/lib/models/vault-entry";
 import { VAULT_ENTRIES } from "@/data/vault-corpus";
+import { CSV_COLUMNS, EXPORT_SCHEMA, csvField } from "@/lib/export-format";
 
 export async function GET(
   req: NextRequest,
@@ -31,22 +32,21 @@ export async function GET(
     vault: vaultId,
     app: APP_ID,
     version: "1.0",
+    schema: EXPORT_SCHEMA,
     entry_count: entries.length,
     entries,
   };
 
   const accept = req.headers.get("accept") ?? "";
   if (accept.includes("text/csv")) {
+    const rows = entries as Array<Record<string, unknown>>;
     const csv = [
-      "entryDate,category,title,icon",
-      ...entries.map(e => {
-        const d = "entryDate" in e ? String(e.entryDate) : "";
-        return `${d},${e.category},"${e.title}",${e.icon}`;
-      }),
-    ].join("\n");
+      CSV_COLUMNS.join(","),
+      ...rows.map(e => CSV_COLUMNS.map(c => csvField(e[c])).join(",")),
+    ].join("\r\n");
     return new NextResponse(csv, {
       headers: {
-        "Content-Type": "text/csv",
+        "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="legacai-vault-${vaultId}.csv"`,
       },
     });
