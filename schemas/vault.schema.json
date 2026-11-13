@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://legacai.app/schemas/v1/vault.schema.json",
+  "title": "Vault manifest (vault.json)",
+  "type": "object",
+  "required": ["formatVersion", "id", "title", "scope", "horizon", "owners", "createdAt"],
+  "properties": {
+    "formatVersion": { "const": "legacai-vault/1" },
+    "id": { "$ref": "common.schema.json#/$defs/id" },
+    "title": { "type": "string" },
+    "scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "horizon": { "$ref": "common.schema.json#/$defs/horizon" },
+    "owners": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "guardians": { "type": "array", "items": { "type": "string" }, "description": "Person ids; releases and promotions need a quorum." },
+    "guardianQuorum": { "type": "integer", "minimum": 1 },
+    "executor": { "type": "string", "description": "Person id who may act after a release event." },
+    "createdAt": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "primer": { "type": "string", "description": "Path to the plain-language README that explains this vault without software." }
+  }
+}

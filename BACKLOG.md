@@ -106,3 +106,13 @@
 ## Fleet cockpit chores
 - [ ] Add to `~/APPS/apps-registry.json` (id:legacai · port_v2:17010 · role:site · accent:#175E54)
 - [ ] Add row to `~/APPS/REPOS.md`
+
+## LegacAI core — proposal (see `docs/legacai/MVP.md`)
+- [x] Findings, architecture, privacy requirements, MVP docs
+- [x] Portable vault JSON Schemas + synthetic `vault-template/` + format test
+- [ ] Step 0: session-derived identity on entries/export/agent; `/admin` closed when auth unconfigured; synthetic demo corpus; `middleware.ts` → `proxy.ts`
+- [ ] Step 1: `layer`, `scope`, `sensitivity`, provenance and `derivedFrom` on models; `Event` log
+- [ ] Step 2: export as portable vault bundle
+- [ ] Step 3: DJAI journal + voice capture into INPUT
+- [ ] Step 4: ProdGame goals/projects in LIVE, lessons to WIKI
+- [ ] Step 5: agent cites record ids

@@ -1,0 +1,14 @@
+{
+  "id": "note_goal-garden",
+  "layer": "live",
+  "file": "LIVE/goal-garden.md",
+  "kind": "goal",
+  "title": "Plant the family orchard",
+  "derivedFrom": ["item_2026-10-10-journal"],
+  "author": { "type": "agent", "id": "agent_connect", "onBehalfOf": "person_alex", "model": "connect-agent/v0" },
+  "status": "draft",
+  "sensitivity": "family",
+  "scope": "family",
+  "people": ["person_alex", "person_sam"],
+  "updatedAt": "2026-10-10T09:10:00Z"
+}

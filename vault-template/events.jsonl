@@ -1,0 +1,4 @@
+{"id":"event_1","type":"import","at":"2026-10-10T09:05:00Z","actor":{"type":"person","id":"person_alex"},"targets":["item_2026-10-10-journal"]}
+{"id":"event_2","type":"derive","at":"2026-10-10T09:10:00Z","actor":{"type":"agent","id":"agent_connect","onBehalfOf":"person_alex"},"targets":["note_goal-garden"]}
+{"id":"event_3","type":"derive","at":"2026-10-10T09:15:00Z","actor":{"type":"agent","id":"agent_curate","onBehalfOf":"person_alex"},"targets":["note_lesson-soil-first"]}
+{"id":"event_4","type":"review","at":"2026-10-10T09:20:00Z","actor":{"type":"person","id":"person_alex"},"targets":["note_lesson-soil-first"]}

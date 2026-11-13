@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://legacai.app/schemas/v1/note.schema.json",
+  "title": "LIVE or WIKI note sidecar (<note>.md.meta.json)",
+  "description": "Derived knowledge. Must trace back to INPUT via derivedFrom.",
+  "type": "object",
+  "required": ["id", "layer", "file", "kind", "title", "derivedFrom", "author", "status", "sensitivity", "scope", "updatedAt"],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/id" },
+    "layer": { "enum": ["live", "wiki"] },
+    "file": { "type": "string" },
+    "kind": {
+      "enum": [
+        "journal", "transcript", "memory", "decision", "value", "story",
+        "goal", "project", "routine", "progress", "outcome", "lesson",
+        "person-page", "topic", "summary", "release-letter"
+      ],
+      "description": "DJAI: journal..story. ProdGame: goal..lesson. General: the rest."
+    },
+    "title": { "type": "string" },
+    "derivedFrom": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "Ids of INPUT items or other notes this is based on." },
+    "author": { "$ref": "common.schema.json#/$defs/actor" },
+    "reviewedBy": { "type": "string", "description": "Person id. Required for WIKI notes." },
+    "status": { "enum": ["draft", "reviewed", "needs-review", "sealed"] },
+    "sensitivity": { "$ref": "common.schema.json#/$defs/sensitivity" },
+    "scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "people": { "type": "array", "items": { "type": "string" } },
+    "updatedAt": { "$ref": "common.schema.json#/$defs/timestamp" }
+  },
+  "if": { "properties": { "layer": { "const": "wiki" } } },
+  "then": { "required": ["reviewedBy"] }
+}

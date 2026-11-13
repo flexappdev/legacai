@@ -9,6 +9,19 @@ For you, for the ones that matter, for now, for the future.
 - **Repo:** [flexappdev/legacai](https://github.com/flexappdev/legacai)
 - **Fleet role:** site #38 in `~/APPS/` (see [REPOS.md](../REPOS.md))
 
+## LegacAI core (proposal)
+
+Long-horizon design for Personal · Family · Business · Country · Worldwide
+vaults over 100 / 1,000 / 10,000 years, with an INPUT → LIVE → WIKI workflow.
+
+- [`docs/legacai/FINDINGS.md`](./docs/legacai/FINDINGS.md) — what exists today, with evidence and risks
+- [`docs/legacai/ARCHITECTURE.md`](./docs/legacai/ARCHITECTURE.md) — architecture, data model, permissions, horizons
+- [`docs/legacai/PRIVACY.md`](./docs/legacai/PRIVACY.md) — consent, ownership, correction, deletion, inheritance
+- [`docs/legacai/MVP.md`](./docs/legacai/MVP.md) — smallest build from existing work
+- [`schemas/`](./schemas/) — portable vault format (JSON Schema)
+- [`agents/`](./agents/README.md) — agent roles and rules
+- [`vault-template/`](./vault-template/README.md) — synthetic example vault, checked by `tests/vault-format.test.ts`
+
 ## Routes
 
 | Path                    | Kind      | Notes                                                                 |
@@ -57,7 +70,7 @@ Each vault sidebar item is a real `<Link>` — tabs are bookmarkable, back/forwa
 ```bash
 cd ~/APPS/legacai
 npm install
-npm test              # 33 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase, models, export
+npm test              # 39 vitest tests — landing, dashboard, checkout, analytics, mongoose, supabase, models, export, vault format
 npm run typecheck     # tsc --noEmit
 npm run build         # production build smoke
 npm run dev           # local dev on :17010

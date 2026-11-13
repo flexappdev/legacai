@@ -1,0 +1,17 @@
+{
+  "id": "item_2026-10-10-journal",
+  "layer": "input",
+  "file": "INPUT/2026-10-10-journal.txt",
+  "sha256": "184a59498571e4fe27397c8a9cd224f1c91bf8d9ba28fc91fc35dd604f9b8bec",
+  "mimeType": "text/plain",
+  "kind": "journal",
+  "originalName": "journal.txt",
+  "capturedAt": "2026-10-10T08:30:00Z",
+  "importedAt": "2026-10-10T09:05:00Z",
+  "source": "DJAI daily journal (typed)",
+  "importer": { "type": "person", "id": "person_alex" },
+  "consentBasis": "self",
+  "sensitivity": "private",
+  "scope": "family",
+  "people": ["person_alex", "person_sam"]
+}

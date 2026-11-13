@@ -1,0 +1,15 @@
+{
+  "id": "note_lesson-soil-first",
+  "layer": "wiki",
+  "file": "WIKI/lesson-soil-first.md",
+  "kind": "lesson",
+  "title": "Test the soil before you buy",
+  "derivedFrom": ["item_2026-10-10-journal", "note_goal-garden"],
+  "author": { "type": "agent", "id": "agent_curate", "onBehalfOf": "person_alex", "model": "curate-agent/v0" },
+  "reviewedBy": "person_alex",
+  "status": "reviewed",
+  "sensitivity": "family",
+  "scope": "family",
+  "people": ["person_alex"],
+  "updatedAt": "2026-10-10T09:20:00Z"
+}
